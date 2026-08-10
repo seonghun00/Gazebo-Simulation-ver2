@@ -34,4 +34,16 @@ services:
     
     # 터미널 접속 시 시작 위치 지정
     working_dir: /workspace/ros2_gazebo_ws
-    command: /bin/bash
+    # Compose 시작 시 지속되는 tmux 세션을 미리 생성합니다.
+    # 접속: docker compose exec robot-sim tmux attach -t robot-sim
+    command:
+      - /bin/bash
+      - -lc
+      - |
+        if ! command -v tmux >/dev/null 2>&1; then
+          apt-get update -o Dir::Etc::sourcelist=/etc/apt/sources.list -o Dir::Etc::sourceparts=-
+          apt-get install -y --no-install-recommends tmux
+          rm -rf /var/lib/apt/lists/*
+        fi
+        tmux has-session -t robot-sim 2>/dev/null || tmux new-session -d -s robot-sim -c /workspace/ros2_gazebo_ws
+        exec sleep infinity
