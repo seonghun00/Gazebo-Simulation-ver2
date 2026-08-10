@@ -1,6 +1,6 @@
 # Mobile Robot restaurant Simulation
 
-#### English | [한국어](README.ko.md)
+#### English | [Korean](README.ko.md)
 
 ![Status](https://img.shields.io/badge/status-in%20progress-yellow)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-blue)
@@ -21,7 +21,7 @@ This project is designed to verify the driving performance and sensor operations
 - [x] Differential Drive Configuration
 - [x] Simple Restaurant Environment
 - [x] Gazebo Simulation Launch
-- [ ] SLAM Mapping
+- [X] SLAM Mapping
 - [ ] AMCL Localization
 - [ ] Nav2 Integration
 - [ ] Waypoint Navigation
@@ -33,13 +33,12 @@ This project is designed to verify the driving performance and sensor operations
 ## Preview
 
 ### Mobile Robot Model
-<img width="1280" height="688" alt="빈월드 서빙로봇" src="https://github.com/user-attachments/assets/7acf06bd-3825-44f7-9a45-ec2eab9c51fa" />
+<img width="1280" height="688" alt="Service robot in an empty world" src="https://github.com/user-attachments/assets/7acf06bd-3825-44f7-9a45-ec2eab9c51fa" />
 
 <p align="center"><i>Fig1. servi_model.urdf spawned in an empty world</i></p>
 
 ### Restaurant Simulation Environment
-<img width="1135" height="632" alt="레스토랑 안 서빙로봇 사진" src="https://github.com/user-attachments/assets/75729a63-e1d2-4441-9135-0f9ffe96fb54" />
-
+<img width="1135" height="632" alt="Service robot in the restaurant" src="https://github.com/user-attachments/assets/75729a63-e1d2-4441-9135-0f9ffe96fb54" />
 
 <p align="center"><i>Fig2. Mobile robot operating within the Gazebo simple restaurant environment</i></p>
 
@@ -81,7 +80,16 @@ Gazebo-Simulation/
     └── src/
         └── my_robot_package/
             ├── launch/
+            │   ├── localization.launch.py
+            │   ├── map_server.launch.py
+            │   ├── navigation.launch.py
             │   └── spawn_servi.launch.py
+            ├── config/
+            │   ├── amcl_params.yaml
+            │   └── nav2_params.yaml
+            ├── maps/
+            │   ├── restaurant_map.pgm
+            │   └── restaurant_map.yaml
             ├── models/
             │   ├── chair/
             │   ├── counter/
@@ -116,7 +124,7 @@ Gazebo-Simulation/
 ## 1. Clone Repository
 
 ```bash
-git clone [https://github.com/seonghun00/Gazebo-Simul.git](https://github.com/seonghun00/Gazebo-Simul.git)
+git clone https://github.com/seonghun00/Gazebo-Simul.git
 cd Gazebo-Simul
 ```
 
@@ -134,10 +142,10 @@ To enable the Gazebo GUI when running via Docker on a Windows host environment, 
 
 ```bash
 # Start the container in detached mode
-docker-compose up -d
+docker compose up -d
 
 # Attach to the simulation container shell
-docker-compose exec robot-sim bash
+docker compose exec robot-sim bash
 ```
 
 ## 4. Build Workspace
@@ -190,6 +198,110 @@ This step launches the full integrated simulation setup including both the custo
 ros2 launch my_robot_package spawn_servi.launch.py
 ```
 *Upon execution, Gazebo will open up displaying the simple restaurant world with the mobile service robot automatically spawned at its initial position.*
+
+---
+
+# Create a Map with SLAM
+
+SLAM creates a map from `/scan` and `/odom`. Run each command in a separate
+container terminal. Do not run localization or Nav2 while creating a map.
+
+If a terminal cannot find `my_robot_package`, run:
+
+```bash
+source /workspace/ros2_gazebo_ws/install/setup.bash
+```
+
+## Terminal 1: Start Gazebo and the Robot
+
+```bash
+ros2 launch my_robot_package spawn_servi.launch.py
+```
+
+Wait until the robot appears in the restaurant.
+
+## Terminal 2: Start SLAM
+
+```bash
+ros2 launch slam_toolbox online_async_launch.py use_sim_time:=true
+```
+
+Keep this terminal running until the map is saved.
+
+## Terminal 3: Start RViz
+
+```bash
+rviz2
+```
+
+Use these RViz settings:
+
+| Display | Setting |
+| :--- | :--- |
+| Fixed Frame | `map` |
+| Map | Topic `/map`, Durability `Transient Local` |
+| LaserScan | Topic `/scan`, Reliability `Best Effort` |
+
+## Terminal 4: Drive the Robot
+
+```bash
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+
+Drive slowly through every aisle. Rotate slowly near the starting point and revisit
+mapped areas to improve the result.
+
+## Terminal 5: Save the Map
+
+```bash
+ros2 run nav2_map_server map_saver_cli \
+  -f /workspace/ros2_gazebo_ws/src/my_robot_package/maps/restaurant_map_slam
+```
+
+This creates:
+
+```text
+restaurant_map_slam.pgm
+restaurant_map_slam.yaml
+```
+
+Check the files, then stop all terminals with `Ctrl+C`.
+
+```bash
+ls -lh /workspace/ros2_gazebo_ws/src/my_robot_package/maps/restaurant_map_slam.*
+```
+
+# Run Localization with the Existing Map
+
+Stop SLAM before starting localization.
+
+## Terminal 1: Gazebo and the Robot
+
+```bash
+ros2 launch my_robot_package spawn_servi.launch.py
+```
+
+## Terminal 2: Map Server and AMCL
+
+```bash
+ros2 launch my_robot_package localization.launch.py
+```
+
+To use the newly created map instead of the default map:
+
+```bash
+ros2 launch my_robot_package localization.launch.py \
+  map:=/workspace/ros2_gazebo_ws/src/my_robot_package/maps/restaurant_map_slam.yaml
+```
+
+## Terminal 3: RViz
+
+```bash
+rviz2
+```
+
+Set the fixed frame to `map`. Set `/map` to `Transient Local` and `/scan` to
+`Best Effort`. Use **2D Pose Estimate** to mark the robot's position and direction.
 
 ---
 

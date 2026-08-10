@@ -10,39 +10,39 @@
 
 본 프로젝트는 카페, 레스토랑 환경에서 서비스 로봇의 주행 및 센서 동작을 검증하기 위해 제작되었습니다. Docker 기반으로 구성하여 별도의 ROS 2 설치 없이 동일한 개발 환경에서 실행할 수 있습니다.
 
-## 🚧 Project Status
+## 🚧 프로젝트 상태
 
 ### 로드맵
 
-- [x] Mobile Robot URDF 모델링
-- [x] LiDAR Sensor 연동
-- [x] 구동 시스템 설정
+- [x] 모바일 로봇 URDF 모델링
+- [x] LiDAR 센서 연동
+- [x] 차동 구동 시스템 설정
 - [x] 간이 레스토랑 월드 생성
 - [x] Gazebo 시뮬레이션 실행 (Launch)
-- [ ] SLAM 지도 생성 Mapping
-- [ ] AMCL 위치 추정 (Localization)
-- [ ] Nav2 네비게이션 적용
-- [ ] 경유지 (Waypoint) 주행 내비게이션
+- [X] SLAM 지도 생성
+- [ ] AMCL 위치 추정
+- [ ] Nav2 내비게이션 적용
+- [ ] 경유지 주행 내비게이션
 - [ ] 자율 서빙 시나리오 구현
 - [ ] RViz 시각화
 
-## Preview
+## 미리보기
 
-### Mobile Robot Model
+### 모바일 로봇 모델
 <img width="1280" height="688" alt="image" src="https://github.com/user-attachments/assets/4669417f-c91b-45aa-be82-97bd5f58ad8b" />   
 
 <p align="center"><i>Fig1. 빈 월드에서 생성된 servi_model.urdf</i></p>
 
-### Restaurant Simulation Environment
-<img width="1135" height="632" alt="레스토랑 안 서빙로봇 사진" src="https://github.com/user-attachments/assets/18cd1fd5-2552-4157-8d3b-9ba77c6d9e89" />
+### 레스토랑 시뮬레이션 환경
+<img width="1135" height="632" alt="레스토랑 안 서빙로봇" src="https://github.com/user-attachments/assets/18cd1fd5-2552-4157-8d3b-9ba77c6d9e89" />
 
 <p align="center"><i>Fig2. Gazebo 간이 레스토랑 환경에서 동작하는 모바일 로봇</i></p>
 
 ---
 
-## Overview
+## 개요
 
-### Features
+### 주요 기능
 * ROS 2 Humble 기반 시뮬레이션 환경
 * Gazebo Cafe World 구축
 * 모바일 로봇 URDF 모델링
@@ -52,9 +52,9 @@
 
 ---
 
-## Simulation Components
+## 시뮬레이션 구성 요소
 
-| Component | Description |
+| 구성 요소 | 설명 |
 |------------|------------|
 | Robot Model | Mobile Service Robot |
 | Sensor | 2D LiDAR |
@@ -75,7 +75,16 @@ Gazebo-Simulation/
     └── src/
         └── my_robot_package/
             ├── launch/
+            │   ├── localization.launch.py
+            │   ├── map_server.launch.py
+            │   ├── navigation.launch.py
             │   └── spawn_servi.launch.py
+            ├── config/
+            │   ├── amcl_params.yaml
+            │   └── nav2_params.yaml
+            ├── maps/
+            │   ├── restaurant_map.pgm
+            │   └── restaurant_map.yaml
             ├── models/
             │   ├── chair/
             │   ├── counter/
@@ -91,13 +100,13 @@ Gazebo-Simulation/
 
 ---
 
-## Requirements
+## 요구 사항
 
-### Host Environment
+### 호스트 환경
 * Docker Desktop
 * Docker Compose
 
-### Simulation Environment
+### 시뮬레이션 환경
 * Ubuntu 22.04
 * ROS 2 Humble
 * Gazebo
@@ -105,16 +114,16 @@ Gazebo-Simulation/
 
 ---
 
-# How to Use
+# 사용 방법
 
-## 1. 깃허브 파일들 불러오기 (clone)
+## 1. 저장소 복제
 
 ```bash
-git clone https://github.com/seonghun00/Gazebo-Simulation.git
-cd Gazebo-Simulation
+git clone https://github.com/seonghun00/Gazebo-Simul.git
+cd Gazebo-Simul
 ```
 
-## 2. Start XLaunch
+## 2. XLaunch 실행
 
 Windows 환경에서 Gazebo GUI를 사용하기 위해 XLaunch를 실행합니다.
 
@@ -124,15 +133,15 @@ Windows 환경에서 Gazebo GUI를 사용하기 위해 XLaunch를 실행합니�
 4. Disable Access Control 체크
 5. Finish
 
-## 3. Docker 환경 구축
+## 3. Docker 환경 실행
 
 ```bash
-docker-compose up -d
+docker compose up -d
 
-docker-compose exec robot-sim bash
+docker compose exec robot-sim bash
 ```
 
-## 4. Build Workspace
+## 4. 워크스페이스 빌드
 
 ```bash
 cd /workspace/ros2_gazebo_ws
@@ -146,9 +155,9 @@ source install/setup.bash
 
 ---
 
-# Run Simulation
+# 시뮬레이션 실행
 
-## 1. Empty World (Robot Model Verification)
+## 1. 빈 월드에서 로봇 모델 확인
 
 URDF 모델이 정상적으로 생성되는지 확인하기 위한 단계입니다.
 
@@ -172,13 +181,117 @@ ros2 run gazebo_ros spawn_entity.py \
 
 ---
 
-## 2. Restaurant Simulation
+## 2. 레스토랑 시뮬레이션
 
 ```bash
 ros2 launch my_robot_package spawn_servi.launch.py
 ```
 
 실행 후 Gazebo가 시작되며 간이 레스토랑 환경과 모바일 서비스 로봇이 함께 생성됩니다.
+
+---
+
+# SLAM으로 지도 생성하기
+
+SLAM은 `/scan`과 `/odom`으로 지도를 생성합니다. 각 명령은 별도의 컨테이너
+터미널에서 실행합니다. 지도 생성 중에는 Localization과 Nav2를 실행하지 마세요.
+
+터미널에서 `my_robot_package`를 찾지 못하면 다음 명령을 실행합니다.
+
+```bash
+source /workspace/ros2_gazebo_ws/install/setup.bash
+```
+
+## 터미널 1: Gazebo와 로봇 실행
+
+```bash
+ros2 launch my_robot_package spawn_servi.launch.py
+```
+
+레스토랑에 로봇이 나타날 때까지 기다립니다.
+
+## 터미널 2: SLAM 실행
+
+```bash
+ros2 launch slam_toolbox online_async_launch.py use_sim_time:=true
+```
+
+지도를 저장할 때까지 이 터미널을 종료하지 마세요.
+
+## 터미널 3: RViz 실행
+
+```bash
+rviz2
+```
+
+RViz를 다음과 같이 설정합니다.
+
+| 항목 | 설정 |
+| :--- | :--- |
+| Fixed Frame | `map` |
+| Map | Topic `/map`, Durability `Transient Local` |
+| LaserScan | Topic `/scan`, Reliability `Best Effort` |
+
+## 터미널 4: 로봇 조종
+
+```bash
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+
+모든 통로를 천천히 주행합니다. 시작 위치에서 천천히 회전하고, 이미 작성한 구역을
+다시 방문하면 지도가 더 정확해집니다.
+
+## 터미널 5: 지도 저장
+
+```bash
+ros2 run nav2_map_server map_saver_cli \
+  -f /workspace/ros2_gazebo_ws/src/my_robot_package/maps/restaurant_map_slam
+```
+
+다음 두 파일이 생성됩니다.
+
+```text
+restaurant_map_slam.pgm
+restaurant_map_slam.yaml
+```
+
+파일을 확인한 다음 모든 터미널을 `Ctrl+C`로 종료합니다.
+
+```bash
+ls -lh /workspace/ros2_gazebo_ws/src/my_robot_package/maps/restaurant_map_slam.*
+```
+
+# 기존 지도로 위치 추정 실행하기
+
+SLAM을 종료한 후 실행합니다.
+
+## 터미널 1: Gazebo와 로봇
+
+```bash
+ros2 launch my_robot_package spawn_servi.launch.py
+```
+
+## 터미널 2: 지도 서버와 AMCL
+
+```bash
+ros2 launch my_robot_package localization.launch.py
+```
+
+새로 만든 지도를 사용하려면 다음 명령을 대신 실행합니다.
+
+```bash
+ros2 launch my_robot_package localization.launch.py \
+  map:=/workspace/ros2_gazebo_ws/src/my_robot_package/maps/restaurant_map_slam.yaml
+```
+
+## 터미널 3: RViz
+
+```bash
+rviz2
+```
+
+Fixed Frame은 `map`으로 설정합니다. `/map`은 `Transient Local`, `/scan`은
+`Best Effort`로 설정한 다음 **2D Pose Estimate**로 로봇 위치와 방향을 지정합니다.
 
 ---
 
