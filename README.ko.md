@@ -119,8 +119,8 @@ Gazebo-Simulation/
 ## 1. 저장소 복제
 
 ```bash
-git clone https://github.com/seonghun00/Gazebo-Simul.git
-cd Gazebo-Simul
+git clone https://github.com/seonghun00/Gazebo-Simulation.git
+cd Gazebo-Simulation
 ```
 
 ## 2. XLaunch 실행
