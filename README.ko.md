@@ -38,6 +38,11 @@
 
 <p align="center"><i>Fig2. Gazebo 간이 레스토랑 환경에서 동작하는 모바일 로봇</i></p>
 
+### SLAM 맵핑
+<img width="1283" height="524" alt="SLAM" src="https://github.com/user-attachments/assets/4a42d605-28e2-425f-87a7-e73756ad4b34" />
+
+<p align="center"><i>Fig3. Gazebo 간이 레스토랑 환경에서 SLAM 맵핑 하는 모습</i></p>
+
 ---
 
 ## 개요
