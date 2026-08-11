@@ -42,6 +42,11 @@ This project is designed to verify the driving performance and sensor operations
 
 <p align="center"><i>Fig2. Mobile robot operating within the Gazebo simple restaurant environment</i></p>
 
+### SLAM Mapping
+<img width="1283" height="524" alt="SLAM" src="https://github.com/user-attachments/assets/0c02223f-aeff-4f63-b183-146853e7b9ae" />
+
+<p align="center"><i>Fig3. Mobile robot performing SLAM in the restaurant simulation environment</i></p>
+
 ---
 
 ## Overview
