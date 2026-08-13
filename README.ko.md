@@ -458,8 +458,7 @@ ros2 topic echo /servi_1/is_charging
 ---
 ## 각 위치로 자율주행 하는 결과 영상 (충전스테이션 -> 주방카운터 -> 4번테이블 -> 충전복귀)
 
-https://github.com/user-attachments/assets/02d99f35-c430-47bf-af84-2086ad886ef8
-
+https://github.com/user-attachments/assets/ae2cbac7-f8ef-4683-aa78-82b2f2b886a5
 
 ---
 
