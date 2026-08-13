@@ -32,6 +32,9 @@ setup(
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [],
+        'console_scripts': [
+            'charging_state = my_robot_package.charging_state:main',
+            'serving_control = my_robot_package.serving_control:main',
+        ],
     },
 )
