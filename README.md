@@ -21,12 +21,12 @@ This project is designed to verify the driving performance and sensor operations
 - [x] Differential Drive Configuration
 - [x] Simple Restaurant Environment
 - [x] Gazebo Simulation Launch
-- [X] SLAM Mapping
-- [ ] AMCL Localization
-- [ ] Nav2 Integration
+- [x] SLAM Mapping
+- [x] AMCL Localization
+- [x] Nav2 Integration
 - [ ] Waypoint Navigation
 - [ ] Autonomous Serving Scenario
-- [ ] RViz Visualization
+- [x] RViz Visualization
 
 ---
 
@@ -306,7 +306,162 @@ rviz2
 ```
 
 Set the fixed frame to `map`. Set `/map` to `Transient Local` and `/scan` to
-`Best Effort`. Use **2D Pose Estimate** to mark the robot's position and direction.
+`Best Effort`. AMCL uses the configured simulation start pose automatically. Use
+**2D Pose Estimate** only if the robot and laser scan do not align with the map.
+
+# Run Navigation with Nav2
+
+Use the saved map with AMCL. Keep each command running in a separate terminal.
+
+## Terminal 1: Gazebo and the Robot
+
+```bash
+ros2 launch my_robot_package spawn_servi.launch.py
+```
+
+## Terminal 2: Map Server and AMCL
+
+```bash
+ros2 launch my_robot_package localization.launch.py
+```
+
+## Terminal 3: Nav2
+
+```bash
+ros2 launch my_robot_package navigation.launch.py
+```
+
+## Terminal 4: RViz
+
+```bash
+rviz2
+```
+
+In RViz:
+
+1. Set **Fixed Frame** to `map`.
+2. Set Map `/map` to `Transient Local`.
+3. Set LaserScan `/scan` to `Best Effort`.
+4. Check that the robot and laser scan align with the map. Use **2D Pose Estimate**
+   only when manual correction is needed.
+5. Use **2D Goal Pose** to set a reachable goal and arrival direction.
+
+Keep AMCL running while Nav2 plans and drives the robot.
+
+## Check Nav2
+
+```bash
+ros2 lifecycle get /map_server
+ros2 action list | grep navigate_to_pose
+ros2 run tf2_ros tf2_echo map base_footprint
+```
+
+`/map_server` should be `active`, the navigation action should exist, and the TF
+values should continue updating.
+
+# Save Table and Service Locations
+
+Save a tested robot stopping pose, not the center of a table or counter.
+
+## 1. Test a Goal in RViz
+
+Run this before clicking **2D Goal Pose**:
+
+```bash
+ros2 topic echo /goal_pose --once
+```
+
+Click a free position in front of a table and drag the arrow toward the table.
+Confirm that the robot arrives without touching a chair. Record `position.x`,
+`position.y`, and its arrival direction.
+
+| Direction | yaw |
+| :--- | ---: |
+| Front `+x` | `0.0` |
+| Left `+y` | `1.5708` |
+| Rear `-x` | `3.1416` |
+| Right `-y` | `-1.5708` |
+
+## 2. Create `locations.yaml`
+
+Create `ros2_gazebo_ws/src/my_robot_package/config/locations.yaml`:
+
+```yaml
+frame_id: map
+
+locations:
+  table_1: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_2: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_3: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_4: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_5: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_6: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_7: {x: 0.0, y: 0.0, yaw: 0.0}
+  kitchen_pickup: {x: 0.0, y: 0.0, yaw: 0.0}
+  charging_station: {x: 0.0, y: 0.0, yaw: 0.0}
+```
+
+Replace the zeros with poses successfully tested in RViz. Repeat for tables 1-7,
+the kitchen pickup counter, and the charging station.
+
+## 3. Rebuild After Saving
+
+```bash
+cd /workspace/ros2_gazebo_ws
+colcon build --packages-select my_robot_package
+source install/setup.bash
+```
+
+## 4. Run the Serving Controller
+
+Start Gazebo, localization, and Nav2 first. Then run:
+
+```bash
+ros2 run my_robot_package serving_control
+```
+
+Enter a command and press Enter. The controller waits for each navigation result
+before accepting the next command.
+
+| Command | Destination |
+| :--- | :--- |
+| `b` | Kitchen pickup counter |
+| `1` - `7` | Selected table |
+| `bb` | Charging station |
+| `q` | Quit |
+
+## Battery and Charging
+
+`charging_state_servi_1` starts automatically with `spawn_servi.launch.py`.
+The robot starts at the charging station with a 100% battery, so the battery
+does not decrease until a serving command starts.
+
+| State | Battery behavior |
+| :--- | :--- |
+| `b` or `1` - `7` goal accepted | Working: decreases by 1% every 10 seconds |
+| `bb` arrival succeeded | Charging: increases by 1% every 5 seconds |
+| Battery reaches 100% | Charging stops and a completion message is printed |
+| Battery reaches 0% | Navigation is stopped and system shutdown is requested |
+
+Battery warnings at 50%, 40%, 30%, 20%, and 10% are printed directly in the
+same terminal running `serving_control`. At 10%, enter `bb` immediately to
+return to the charging station.
+
+```text
+[BATTERY WARNING] 50% remaining.
+[BATTERY WARNING] 40% remaining.
+[BATTERY WARNING] 30% remaining.
+[BATTERY WARNING] 20% remaining.
+[CRITICAL BATTERY] 10% remaining. Enter "bb" now to return to the charging station.
+[CHARGING COMPLETE] Battery is at 100%.
+```
+
+Optional status checks:
+
+```bash
+ros2 topic echo /servi_1/battery_percentage
+ros2 topic echo /servi_1/is_charging
+```
 
 ---
 

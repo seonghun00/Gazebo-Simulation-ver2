@@ -19,12 +19,12 @@
 - [x] 차동 구동 시스템 설정
 - [x] 간이 레스토랑 월드 생성
 - [x] Gazebo 시뮬레이션 실행 (Launch)
-- [X] SLAM 지도 생성
-- [ ] AMCL 위치 추정
-- [ ] Nav2 내비게이션 적용
+- [x] SLAM 지도 생성
+- [x] AMCL 위치 추정
+- [x] Nav2 내비게이션 적용
 - [ ] 경유지 주행 내비게이션
 - [ ] 자율 서빙 시나리오 구현
-- [ ] RViz 시각화
+- [x] RViz 시각화
 
 ## 미리보기
 
@@ -296,7 +296,161 @@ rviz2
 ```
 
 Fixed Frame은 `map`으로 설정합니다. `/map`은 `Transient Local`, `/scan`은
-`Best Effort`로 설정한 다음 **2D Pose Estimate**로 로봇 위치와 방향을 지정합니다.
+`Best Effort`로 설정합니다. AMCL은 설정된 시뮬레이션 시작 위치를 자동으로
+사용합니다. 지도와 로봇이 맞지 않을 때만 **2D Pose Estimate**로 보정합니다.
+
+# Nav2로 자율주행 실행하기
+
+저장된 지도와 AMCL을 사용합니다. 각 명령은 별도의 터미널에서 계속 실행합니다.
+
+## 터미널 1: Gazebo와 로봇
+
+```bash
+ros2 launch my_robot_package spawn_servi.launch.py
+```
+
+## 터미널 2: 지도 서버와 AMCL
+
+```bash
+ros2 launch my_robot_package localization.launch.py
+```
+
+## 터미널 3: Nav2
+
+```bash
+ros2 launch my_robot_package navigation.launch.py
+```
+
+## 터미널 4: RViz
+
+```bash
+rviz2
+```
+
+RViz에서 다음 순서로 설정합니다.
+
+1. **Fixed Frame**을 `map`으로 설정합니다.
+2. Map `/map`의 Durability를 `Transient Local`로 설정합니다.
+3. LaserScan `/scan`의 Reliability를 `Best Effort`로 설정합니다.
+4. 지도와 로봇 및 LaserScan이 일치하는지 확인합니다. 맞지 않을 때만
+   **2D Pose Estimate**로 보정합니다.
+5. **2D Goal Pose**로 목적지와 도착 방향을 지정합니다.
+
+Nav2가 경로를 계획하고 주행하는 동안 AMCL을 계속 실행해야 합니다.
+
+## Nav2 상태 확인
+
+```bash
+ros2 lifecycle get /map_server
+ros2 action list | grep navigate_to_pose
+ros2 run tf2_ros tf2_echo map base_footprint
+```
+
+`/map_server`는 `active`여야 하며, navigation action과 계속 갱신되는 TF가 보여야
+합니다.
+
+# 테이블과 서비스 위치 저장하기
+
+테이블이나 카운터의 중심이 아니라, 로봇이 실제로 도착해서 멈출 위치를 저장합니다.
+
+## 1. RViz에서 목표 시험
+
+**2D Goal Pose**를 클릭하기 전에 다음 명령을 실행합니다.
+
+```bash
+ros2 topic echo /goal_pose --once
+```
+
+테이블 앞의 빈 공간을 클릭하고 화살표를 테이블 방향으로 드래그합니다. 로봇이 의자와
+충돌하지 않고 도착하면 `position.x`, `position.y`와 도착 방향을 기록합니다.
+
+| 방향 | yaw |
+| :--- | ---: |
+| 정면 `+x` | `0.0` |
+| 왼쪽 `+y` | `1.5708` |
+| 뒤쪽 `-x` | `3.1416` |
+| 오른쪽 `-y` | `-1.5708` |
+
+## 2. `locations.yaml` 작성
+
+`ros2_gazebo_ws/src/my_robot_package/config/locations.yaml` 파일을 만듭니다.
+
+```yaml
+frame_id: map
+
+locations:
+  table_1: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_2: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_3: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_4: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_5: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_6: {x: 0.0, y: 0.0, yaw: 0.0}
+  table_7: {x: 0.0, y: 0.0, yaw: 0.0}
+  kitchen_pickup: {x: 0.0, y: 0.0, yaw: 0.0}
+  charging_station: {x: 0.0, y: 0.0, yaw: 0.0}
+```
+
+`0.0`을 RViz에서 성공적으로 시험한 값으로 교체합니다. 1~7번 테이블, 주방 카운터,
+충전 스테이션을 각각 같은 방법으로 시험합니다.
+
+## 3. 저장 후 다시 빌드
+
+```bash
+cd /workspace/ros2_gazebo_ws
+colcon build --packages-select my_robot_package
+source install/setup.bash
+```
+
+## 4. 서빙 제어 노드 실행
+
+Gazebo, Localization, Nav2를 먼저 실행한 다음 시작합니다.
+
+```bash
+ros2 run my_robot_package serving_control
+```
+
+명령을 입력하고 Enter를 누릅니다. 현재 이동이 성공하거나 실패한 뒤 다음 명령을
+입력할 수 있습니다.
+
+| 명령 | 목적지 |
+| :--- | :--- |
+| `b` | 주방 음식 수령대 |
+| `1` - `7` | 선택한 테이블 |
+| `bb` | 충전 스테이션 |
+| `q` | 종료 |
+
+## 배터리와 충전
+
+`charging_state_servi_1` 노드는 `spawn_servi.launch.py`와 함께 자동으로
+실행됩니다. 로봇은 충전 스테이션에서 배터리 100%로 시작하므로 서빙 명령을
+받기 전에는 배터리가 감소하지 않습니다.
+
+| 상태 | 배터리 동작 |
+| :--- | :--- |
+| `b` 또는 `1` - `7` 목표 수락 | 작업 시작: 10초마다 1% 감소 |
+| `bb`로 충전 스테이션 도착 성공 | 충전 시작: 5초마다 1% 증가 |
+| 배터리 100% 도달 | 충전을 멈추고 완충 메시지 출력 |
+| 배터리 0% 도달 | 주행을 중단하고 시스템 종료 요청 |
+
+배터리가 50%, 40%, 30%, 20%, 10%가 되면 `serving_control`을 실행한 명령
+터미널에 경고가 바로 출력됩니다. 10% 경고가 나오면 즉시 `bb`를 입력해 충전
+스테이션으로 복귀합니다.
+
+```text
+[BATTERY WARNING] 50% remaining.
+[BATTERY WARNING] 40% remaining.
+[BATTERY WARNING] 30% remaining.
+[BATTERY WARNING] 20% remaining.
+[CRITICAL BATTERY] 10% remaining. Enter "bb" now to return to the charging station.
+[CHARGING COMPLETE] Battery is at 100%.
+```
+
+필요한 경우 다른 터미널에서 상태를 확인할 수 있습니다.
+
+```bash
+ros2 topic echo /servi_1/battery_percentage
+ros2 topic echo /servi_1/is_charging
+```
 
 ---
 
