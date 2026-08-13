@@ -9,7 +9,7 @@ import os
 
 def generate_launch_description():
     package_share = get_package_share_directory('my_robot_package')
-    default_map = os.path.join(package_share, 'maps', 'restaurant_map.yaml')
+    default_map = os.path.join(package_share, 'maps', 'restaurant_map_slam.yaml')
 
     map_yaml = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')

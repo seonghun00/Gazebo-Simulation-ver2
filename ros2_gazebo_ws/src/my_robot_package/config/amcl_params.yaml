@@ -36,6 +36,11 @@ amcl:
     resample_interval: 1
     transform_tolerance: 1.0
 
-    # Wait for an initial pose from RViz or the /initialpose topic.
-    set_initial_pose: false
+    # The simulation always spawns the robot at the charging station.
+    set_initial_pose: true
     always_reset_initial_pose: false
+    initial_pose:
+      x: -7.12
+      y: -4.988542
+      z: 0.0
+      yaw: 0.0

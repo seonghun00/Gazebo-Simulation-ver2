@@ -18,7 +18,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'map',
             default_value=os.path.join(
-                package_share, 'maps', 'restaurant_map.yaml'
+                package_share, 'maps', 'restaurant_map_slam.yaml'
             ),
             description='Absolute path to the occupancy-grid map YAML file',
         ),
