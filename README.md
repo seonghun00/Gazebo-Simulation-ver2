@@ -468,7 +468,7 @@ ros2 topic echo /servi_1/is_charging
 
 ## Autonomous Navigation Demo (Charging Station → Kitchen Counter → Table 4 → Charging Station)
 
-https://github.com/user-attachments/assets/02d99f35-c430-47bf-af84-2086ad886ef8
+https://github.com/user-attachments/assets/b09d8b21-9ca7-4926-a3cb-e7b876ed6227
 
 ---
 
