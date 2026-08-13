@@ -22,9 +22,10 @@
 - [x] SLAM 지도 생성
 - [x] AMCL 위치 추정
 - [x] Nav2 내비게이션 적용
-- [ ] 경유지 주행 내비게이션
-- [ ] 자율 서빙 시나리오 구현
+- [X] 경유지 주행 내비게이션
+- [X] 자율 서빙 시나리오 구현
 - [x] RViz 시각화
+- [ ] 2대 이상 Fleet 관리
 
 ## 미리보기
 
@@ -247,6 +248,8 @@ ros2 run turtlebot3_teleop teleop_keyboard
 다시 방문하면 지도가 더 정확해집니다.
 
 ## 터미널 5: 지도 저장
+
+rviz2로 지도를 어느정도 선명하게 만들었다면 아래 명령어로 지도를 저장합니다.
 
 ```bash
 ros2 run nav2_map_server map_saver_cli \
