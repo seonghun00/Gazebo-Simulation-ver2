@@ -1,0 +1,9 @@
+# Local editor settings
+.vscode/
+
+# Runtime logs
+*.log
+
+# ROS TF view_frames output
+**/frames_*.gv
+**/frames_*.pdf
