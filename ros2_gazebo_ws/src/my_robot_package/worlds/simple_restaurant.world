@@ -1,138 +1,324 @@
 <?xml version="1.0"?>
 <sdf version="1.7">
-<world name="simple_restaurant">
+  <world name="simple_restaurant">
 
-  <!-- ====================== GUI 카메라 설정 ====================== -->
-  <gui>
-    <camera name="user_camera">
-      <pose>-20 0 20 0 0.8 0</pose>   <!-- 앞,뒤 / 왼,오 / 위,아래 / roll / pitch / yaw -->
-    </camera>
-  </gui>
+    <!--
+      View reference from the restaurant center:
+        +X: front
+        -X: rear
+        +Y: left
+        -Y: right
+    -->
 
-  <!-- Default Environment -->
-  <include>
-    <uri>model://ground_plane</uri>
-  </include>
-  <include>
-    <uri>model://sun</uri>
-  </include>
+    <!-- ==================== GUI ==================== -->
+    <gui>
+      <camera name="user_camera">
+        <pose>-20 0 20 0 0.8 0</pose>
+      </camera>
+    </gui>
 
-  <!-- ===================================== -->
-  <!-- Walls - 정확히 맞춤 -->
-  <!-- ===================================== -->
-  <!-- Bottom Wall -->
-  <model name="wall_bottom">
-    <static>true</static>
-    <pose>0 -6.0 1.25 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry><box><size>16 0.2 2.5</size></box></geometry>
-      </collision>
-      <visual name="visual">
-        <geometry><box><size>16 0.2 2.5</size></box></geometry>
-      </visual>
-    </link>
-  </model>
+    <!-- ================== Environment ================== -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
 
-  <!-- Top Wall -->
-  <model name="wall_top">
-    <static>true</static>
-    <pose>0 6.0 1.25 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry><box><size>16 0.2 2.5</size></box></geometry>
-      </collision>
-      <visual name="visual">
-        <geometry><box><size>16 0.2 2.5</size></box></geometry>
-      </visual>
-    </link>
-  </model>
+    <include>
+      <uri>model://sun</uri>
+    </include>
 
-  <!-- Left Wall -->
-  <model name="wall_left">
-    <static>true</static>
-    <pose>-8.0 0 1.25 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry><box><size>0.2 12.2 2.5</size></box></geometry>
-      </collision>
-      <visual name="visual">
-        <geometry><box><size>0.2 12.2 2.5</size></box></geometry>
-      </visual>
-    </link>
-  </model>
+    <!-- ===================== Walls ===================== -->
 
-  <!-- Right Wall -->
-  <model name="wall_right">
-    <static>true</static>
-    <pose>8.0 0 1.25 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry><box><size>0.2 12.2 2.5</size></box></geometry>
-      </collision>
-      <visual name="visual">
-        <geometry><box><size>0.2 12.2 2.5</size></box></geometry>
-      </visual>
-    </link>
-  </model>
+    <!-- Right wall: -Y -->
+    <model name="wall_right">
+      <static>true</static>
+      <pose>0 -6.0 1.25 0 0 0</pose>
+      <link name="wall_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>16 0.2 2.5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>16 0.2 2.5</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
 
-  <!-- ===================================== -->
-  <!-- Counter -->
-  <!-- ===================================== -->
-  <include>
-    <uri>model://counter</uri>
-    <pose>-5.5 0 0 0 0 1.57</pose>
-  </include>
+    <!-- Left wall: +Y -->
+    <model name="wall_left">
+      <static>true</static>
+      <pose>0 6.0 1.25 0 0 0</pose>
+      <link name="wall_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>16 0.2 2.5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>16 0.2 2.5</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
 
-  <!-- Top Row Tables -->
-  <include>
-    <uri>model://table_set</uri><name>table_set_1</name>
-    <pose>-4.0 3.0 0 0 0 0</pose>
-  </include>
-  <include>
-    <uri>model://table_set</uri><name>table_set_2</name>
-    <pose>-1.0 3.0 0 0 0 0</pose>
-  </include>
-  <include>
-    <uri>model://table_set</uri><name>table_set_3</name>
-    <pose>2.0 3.0 0 0 0 0</pose>
-  </include>
-  <include>
-    <uri>model://table_set</uri><name>table_set_4</name>
-    <pose>5.0 3.0 0 0 0 0</pose>
-  </include>
+    <!-- Rear wall: -X -->
+    <model name="wall_rear">
+      <static>true</static>
+      <pose>-8.0 0 1.25 0 0 0</pose>
+      <link name="wall_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.2 12.2 2.5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 12.2 2.5</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
 
-  <!-- Bottom Row Tables -->
-  <include>
-    <uri>model://table_set</uri><name>table_set_5</name>
-    <pose>-4.0 -3.0 0 0 0 0</pose>
-  </include>
-  <include>
-    <uri>model://table_set</uri><name>table_set_6</name>
-    <pose>-1.0 -3.0 0 0 0 0</pose>
-  </include>
-  <include>
-    <uri>model://table_set</uri><name>table_set_7</name>
-    <pose>2.0 -3.0 0 0 0 0</pose>
-  </include>
-  <include>
-    <uri>model://table_set</uri><name>table_set_8</name>
-    <pose>5.0 -3.0 0 0 0 0</pose>
-  </include>
+    <!-- Front wall: +X -->
+    <model name="wall_front">
+      <static>true</static>
+      <pose>8.0 0 1.25 0 0 0</pose>
+      <link name="wall_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.2 12.2 2.5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 12.2 2.5</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
 
-  <!-- Charging Station -->
-  <model name="charging_station">
-    <static>true</static>
-    <pose>7.0 -5.0 0.05 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry><cylinder><radius>0.25</radius><length>0.1</length></cylinder></geometry>
-      </collision>
-      <visual name="visual">
-        <geometry><cylinder><radius>0.25</radius><length>0.1</length></cylinder></geometry>
-      </visual>
-    </link>
-  </model>
+    <!-- ================== Service Area ================== -->
 
-</world>
+    <!-- Customer counter: left rear, 0.55 m from the left wall -->
+    <include>
+      <uri>model://counter</uri>
+      <name>customer_counter</name>
+      <pose>-4.3 4.6 0 0 0 0</pose>
+    </include>
+
+    <!-- Automatic door: attached to the left wall, beside the counter -->
+    <model name="automatic_door">
+      <static>true</static>
+      <pose>-6.3 5.88 1.05 0 0 0</pose>
+      <link name="door_link">
+        <visual name="door_visual">
+          <geometry>
+            <box>
+              <size>1.4 0.04 2.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.01 0.01 0.01 1</ambient>
+            <diffuse>0.01 0.01 0.01 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Kitchen pickup counter: attached to the rear wall -->
+    <model name="kitchen_pickup_counter">
+      <static>true</static>
+      <pose>-7.525 -1.35625 0 0 0 1.5708</pose>
+      <link name="pickup_counter_link">
+        <collision name="collision">
+          <pose>0 0 0.5 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0625 0.75 1.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <pose>0 0 0.5 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0625 0.75 1.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.76 0.60 0.42 1</ambient>
+            <diffuse>0.76 0.60 0.42 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Tomato pasta plate, aligned with the kitchen_pickup approach line -->
+    <model name="tomato_pasta_plate">
+      <static>true</static>
+      <pose>-7.525 -0.474823 1.0 0 0 0</pose>
+      <link name="plate_link">
+        <!-- White plate -->
+        <visual name="plate">
+          <pose>0 0 0.0125 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.20</radius>
+              <length>0.025</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.96 0.96 0.94 1</ambient>
+            <diffuse>0.96 0.96 0.94 1</diffuse>
+          </material>
+        </visual>
+
+        <!-- Tomato pasta -->
+        <visual name="tomato_sauce">
+          <pose>0 0 0.031 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.145</radius>
+              <length>0.014</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.72 0.10 0.045 1</ambient>
+            <diffuse>0.88 0.16 0.06 1</diffuse>
+          </material>
+        </visual>
+
+        <!-- Visible pasta strands -->
+        <visual name="pasta_strand_1">
+          <pose>0.015 0.015 0.047 0 1.5708 0.30</pose>
+          <geometry><cylinder><radius>0.009</radius><length>0.24</length></cylinder></geometry>
+          <material><ambient>0.95 0.55 0.12 1</ambient><diffuse>1.0 0.63 0.16 1</diffuse></material>
+        </visual>
+        <visual name="pasta_strand_2">
+          <pose>-0.010 -0.020 0.049 0 1.5708 -0.45</pose>
+          <geometry><cylinder><radius>0.008</radius><length>0.22</length></cylinder></geometry>
+          <material><ambient>0.95 0.55 0.12 1</ambient><diffuse>1.0 0.63 0.16 1</diffuse></material>
+        </visual>
+        <visual name="pasta_strand_3">
+          <pose>-0.020 0.025 0.051 0 1.5708 1.05</pose>
+          <geometry><cylinder><radius>0.008</radius><length>0.20</length></cylinder></geometry>
+          <material><ambient>0.95 0.55 0.12 1</ambient><diffuse>1.0 0.63 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- Meatballs and basil toppings -->
+        <visual name="meatball_1">
+          <pose>-0.070 -0.045 0.060 0 0 0</pose>
+          <geometry><sphere><radius>0.030</radius></sphere></geometry>
+          <material><ambient>0.35 0.10 0.045 1</ambient><diffuse>0.48 0.15 0.06 1</diffuse></material>
+        </visual>
+        <visual name="meatball_2">
+          <pose>0.065 0.040 0.061 0 0 0</pose>
+          <geometry><sphere><radius>0.028</radius></sphere></geometry>
+          <material><ambient>0.35 0.10 0.045 1</ambient><diffuse>0.48 0.15 0.06 1</diffuse></material>
+        </visual>
+        <visual name="basil_1">
+          <pose>-0.015 0.075 0.058 0 0 0.45</pose>
+          <geometry><box><size>0.055 0.025 0.006</size></box></geometry>
+          <material><ambient>0.06 0.30 0.08 1</ambient><diffuse>0.10 0.48 0.12 1</diffuse></material>
+        </visual>
+        <visual name="basil_2">
+          <pose>0.050 -0.060 0.057 0 0 -0.65</pose>
+          <geometry><box><size>0.045 0.021 0.006</size></box></geometry>
+          <material><ambient>0.06 0.30 0.08 1</ambient><diffuse>0.10 0.48 0.12 1</diffuse></material>
+        </visual>
+        <visual name="cheese">
+          <pose>0.005 -0.005 0.059 0 0 0</pose>
+          <geometry><sphere><radius>0.018</radius></sphere></geometry>
+          <material><ambient>0.96 0.84 0.52 1</ambient><diffuse>1.0 0.90 0.58 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Charging station: to the right of the kitchen pickup counter -->
+    <model name="charging_station">
+      <static>true</static>
+      <pose>-7.12 -4.988542 0 0 0 0</pose>
+      <link name="charging_station_link">
+        <visual name="visual">
+          <pose>0 0 0.0025 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>0.005</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.53 0.81 0.98 1</ambient>
+            <diffuse>0.53 0.81 0.98 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================== Dining Area ================== -->
+
+    <!-- Left-side tables: +Y -->
+    <include>
+      <uri>model://table_set</uri>
+      <name>table_set_1</name>
+      <pose>-1.3 3.3 0 0 0 1.5708</pose>
+    </include>
+
+    <include>
+      <uri>model://table_set</uri>
+      <name>table_set_2</name>
+      <pose>1.9 3.3 0 0 0 1.5708</pose>
+    </include>
+
+    <include>
+      <uri>model://table_set</uri>
+      <name>table_set_3</name>
+      <pose>5.1 3.3 0 0 0 1.5708</pose>
+    </include>
+
+    <!-- Right-side tables: -Y -->
+    <include>
+      <uri>model://table_set</uri>
+      <name>table_set_4</name>
+      <pose>-4.5 -3.3 0 0 0 1.5708</pose>
+    </include>
+
+    <include>
+      <uri>model://table_set</uri>
+      <name>table_set_5</name>
+      <pose>-1.3 -3.3 0 0 0 1.5708</pose>
+    </include>
+
+    <include>
+      <uri>model://table_set</uri>
+      <name>table_set_6</name>
+      <pose>1.9 -3.3 0 0 0 1.5708</pose>
+    </include>
+
+    <include>
+      <uri>model://table_set</uri>
+      <name>table_set_7</name>
+      <pose>5.1 -3.3 0 0 0 1.5708</pose>
+    </include>
+
+  </world>
 </sdf>

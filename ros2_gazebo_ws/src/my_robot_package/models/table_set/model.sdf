@@ -16,7 +16,7 @@
 
       <geometry>
         <box>
-          <size>1.2 0.6 0.75</size>
+          <size>1.22 0.75 0.75</size>
         </box>
       </geometry>
     </collision>
@@ -26,7 +26,7 @@
 
       <geometry>
         <box>
-          <size>1.2 0.6 0.75</size>
+          <size>1.22 0.75 0.75</size>
         </box>
       </geometry>
     </visual>
@@ -36,22 +36,22 @@
     <!-- ========================= -->
 
     <collision name="chair1_collision">
-      <pose>-0.25 0.80 0.225 0 0 0</pose>
+      <pose>-0.30 0.90 0.2 0 0 0</pose>
 
       <geometry>
         <cylinder>
-          <radius>0.15</radius>
+          <radius>0.2</radius>
           <length>0.45</length>
         </cylinder>
       </geometry>
     </collision>
 
     <visual name="chair1_visual">
-      <pose>-0.25 0.80 0.225 0 0 0</pose>
+      <pose>-0.30 0.90 0.2 0 0 0</pose>
 
       <geometry>
         <cylinder>
-          <radius>0.15</radius>
+          <radius>0.2</radius>
           <length>0.45</length>
         </cylinder>
       </geometry>
@@ -60,22 +60,22 @@
     <!-- Chair 2 -->
 
     <collision name="chair2_collision">
-      <pose>0.25 0.80 0.225 0 0 0</pose>
+      <pose>0.30 0.90 0.2 0 0 0</pose>
 
       <geometry>
         <cylinder>
-          <radius>0.15</radius>
+          <radius>0.2</radius>
           <length>0.45</length>
         </cylinder>
       </geometry>
     </collision>
 
     <visual name="chair2_visual">
-      <pose>0.25 0.80 0.225 0 0 0</pose>
+      <pose>0.30 0.90 0.2 0 0 0</pose>
 
       <geometry>
         <cylinder>
-          <radius>0.15</radius>
+          <radius>0.2</radius>
           <length>0.45</length>
         </cylinder>
       </geometry>
@@ -84,22 +84,22 @@
     <!-- Chair 3 -->
 
     <collision name="chair3_collision">
-      <pose>-0.25 -0.80 0.225 0 0 0</pose>
+      <pose>-0.30 -0.90 0.2 0 0 0</pose>
 
       <geometry>
         <cylinder>
-          <radius>0.15</radius>
+          <radius>0.2</radius>
           <length>0.45</length>
         </cylinder>
       </geometry>
     </collision>
 
     <visual name="chair3_visual">
-      <pose>-0.25 -0.80 0.225 0 0 0</pose>
+      <pose>-0.30 -0.90 0.2 0 0 0</pose>
 
       <geometry>
         <cylinder>
-          <radius>0.15</radius>
+          <radius>0.2</radius>
           <length>0.45</length>
         </cylinder>
       </geometry>
@@ -108,22 +108,22 @@
     <!-- Chair 4 -->
 
     <collision name="chair4_collision">
-      <pose>0.25 -0.80 0.225 0 0 0</pose>
+      <pose>0.30 -0.90 0.2 0 0 0</pose>
 
       <geometry>
         <cylinder>
-          <radius>0.15</radius>
+          <radius>0.2</radius>
           <length>0.45</length>
         </cylinder>
       </geometry>
     </collision>
 
     <visual name="chair4_visual">
-      <pose>0.25 -0.80 0.225 0 0 0</pose>
+      <pose>0.30 -0.90 0.2 0 0 0</pose>
 
       <geometry>
         <cylinder>
-          <radius>0.15</radius>
+          <radius>0.2</radius>
           <length>0.45</length>
         </cylinder>
       </geometry>
