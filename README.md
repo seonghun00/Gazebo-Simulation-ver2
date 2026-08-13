@@ -24,26 +24,27 @@ This project is designed to verify the driving performance and sensor operations
 - [x] SLAM Mapping
 - [x] AMCL Localization
 - [x] Nav2 Integration
-- [ ] Waypoint Navigation
-- [ ] Autonomous Serving Scenario
+- [x] Waypoint Navigation
+- [x] Autonomous Serving Scenario
 - [x] RViz Visualization
+- [ ] Fleet Management for Multiple Robots
 
 ---
 
 ## Preview
 
 ### Mobile Robot Model
-<img width="1280" height="688" alt="Service robot in an empty world" src="https://github.com/user-attachments/assets/7acf06bd-3825-44f7-9a45-ec2eab9c51fa" />
+<img width="1280" height="688" alt="Service robot in an empty world" src="https://github.com/user-attachments/assets/4669417f-c91b-45aa-be82-97bd5f58ad8b" />
 
 <p align="center"><i>Fig1. servi_model.urdf spawned in an empty world</i></p>
 
 ### Restaurant Simulation Environment
-<img width="1135" height="632" alt="Service robot in the restaurant" src="https://github.com/user-attachments/assets/75729a63-e1d2-4441-9135-0f9ffe96fb54" />
+<img width="1913" height="1020" alt="Service robot in the restaurant" src="https://github.com/user-attachments/assets/7ea82b5c-6883-4a75-aac8-11a2785a5b0b" />
 
 <p align="center"><i>Fig2. Mobile robot operating within the Gazebo simple restaurant environment</i></p>
 
 ### SLAM Mapping
-<img width="1283" height="524" alt="SLAM" src="https://github.com/user-attachments/assets/0c02223f-aeff-4f63-b183-146853e7b9ae" />
+<img width="1912" height="767" alt="Intermediate SLAM mapping result" src="https://github.com/user-attachments/assets/4cb9bc90-7143-4ca4-ac37-d214f4e5926b" />
 
 <p align="center"><i>Fig3. Mobile robot performing SLAM in the restaurant simulation environment</i></p>
 
@@ -462,6 +463,12 @@ Optional status checks:
 ros2 topic echo /servi_1/battery_percentage
 ros2 topic echo /servi_1/is_charging
 ```
+
+---
+
+## Autonomous Navigation Demo (Charging Station → Kitchen Counter → Table 4 → Charging Station)
+
+https://github.com/user-attachments/assets/02d99f35-c430-47bf-af84-2086ad886ef8
 
 ---
 
