@@ -35,12 +35,12 @@
 <p align="center"><i>Fig1. 빈 월드에서 생성된 servi_model.urdf</i></p>
 
 ### 레스토랑 시뮬레이션 환경
-<img width="1135" height="632" alt="레스토랑 안 서빙로봇" src="https://github.com/user-attachments/assets/18cd1fd5-2552-4157-8d3b-9ba77c6d9e89" />
+<img width="1913" height="1020" alt="image" src="https://github.com/user-attachments/assets/7ea82b5c-6883-4a75-aac8-11a2785a5b0b" />
 
 <p align="center"><i>Fig2. Gazebo 간이 레스토랑 환경에서 동작하는 모바일 로봇</i></p>
 
 ### SLAM 맵핑
-<img width="1283" height="524" alt="SLAM" src="https://github.com/user-attachments/assets/4a42d605-28e2-425f-87a7-e73756ad4b34" />
+<img width="1912" height="767" alt="SLAM 중간과정" src="https://github.com/user-attachments/assets/4cb9bc90-7143-4ca4-ac37-d214f4e5926b" />
 
 <p align="center"><i>Fig3. Gazebo 간이 레스토랑 환경에서 SLAM 맵핑 하는 모습</i></p>
 
@@ -454,6 +454,12 @@ ros2 run my_robot_package serving_control
 ros2 topic echo /servi_1/battery_percentage
 ros2 topic echo /servi_1/is_charging
 ```
+
+---
+## 각 위치로 자율주행 하는 결과 영상 (충전스테이션 -> 주방카운터 -> 4번테이블 -> 충전복귀)
+
+https://github.com/user-attachments/assets/02d99f35-c430-47bf-af84-2086ad886ef8
+
 
 ---
 
