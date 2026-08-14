@@ -428,27 +428,9 @@ ros2 run my_robot_package serving_control
 실행됩니다. 로봇은 충전 스테이션에서 배터리 100%로 시작하므로 서빙 명령을
 받기 전에는 배터리가 감소하지 않습니다.
 
-| 상태 | 배터리 동작 |
-| :--- | :--- |
-| `b` 또는 `1` - `7` 목표 수락 | 작업 시작: 10초마다 1% 감소 |
-| `bb`로 충전 스테이션 도착 성공 | 충전 시작: 5초마다 1% 증가 |
-| 배터리 100% 도달 | 충전을 멈추고 완충 메시지 출력 |
-| 배터리 0% 도달 | 주행을 중단하고 시스템 종료 요청 |
-
 배터리가 50%, 40%, 30%, 20%, 10%가 되면 `serving_control`을 실행한 명령
 터미널에 경고가 바로 출력됩니다. 10% 경고가 나오면 즉시 `bb`를 입력해 충전
 스테이션으로 복귀합니다.
-
-```text
-[BATTERY WARNING] 50% remaining.
-[BATTERY WARNING] 40% remaining.
-[BATTERY WARNING] 30% remaining.
-[BATTERY WARNING] 20% remaining.
-[CRITICAL BATTERY] 10% remaining. Enter "bb" now to return to the charging station.
-[CHARGING COMPLETE] Battery is at 100%.
-```
-
-필요한 경우 다른 터미널에서 상태를 확인할 수 있습니다.
 
 ```bash
 ros2 topic echo /servi_1/battery_percentage

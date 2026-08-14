@@ -1,6 +1,6 @@
 # Mobile Robot restaurant Simulation
 
-#### English | [Korean](README.ko.md)
+#### English | [한국어](README.ko.md)
 
 ![Status](https://img.shields.io/badge/status-in%20progress-yellow)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-blue)
@@ -437,25 +437,9 @@ before accepting the next command.
 The robot starts at the charging station with a 100% battery, so the battery
 does not decrease until a serving command starts.
 
-| State | Battery behavior |
-| :--- | :--- |
-| `b` or `1` - `7` goal accepted | Working: decreases by 1% every 10 seconds |
-| `bb` arrival succeeded | Charging: increases by 1% every 5 seconds |
-| Battery reaches 100% | Charging stops and a completion message is printed |
-| Battery reaches 0% | Navigation is stopped and system shutdown is requested |
-
 Battery warnings at 50%, 40%, 30%, 20%, and 10% are printed directly in the
 same terminal running `serving_control`. At 10%, enter `bb` immediately to
 return to the charging station.
-
-```text
-[BATTERY WARNING] 50% remaining.
-[BATTERY WARNING] 40% remaining.
-[BATTERY WARNING] 30% remaining.
-[BATTERY WARNING] 20% remaining.
-[CRITICAL BATTERY] 10% remaining. Enter "bb" now to return to the charging station.
-[CHARGING COMPLETE] Battery is at 100%.
-```
 
 Optional status checks:
 
