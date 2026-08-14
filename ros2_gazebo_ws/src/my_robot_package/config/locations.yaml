@@ -1,3 +1,8 @@
+# serving_control.py가 목적지로 사용하는 map 프레임 기준 정차 좌표.
+# x와 y는 목적지에 도착했을 때의 로봇 중심 위치이고, yaw는 도착 후 로봇이
+# 바라볼 방향이다. serving_control.py가 이 값을 NavigateToPose 액션으로
+# Nav2에 전달한다.
+
 frame_id: map
 
 locations:

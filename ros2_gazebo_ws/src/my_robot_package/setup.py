@@ -1,3 +1,10 @@
+"""my_robot_package를 ROS 2 Python 패키지로 설치하기 위한 설정 파일.
+
+Launch, 설정, 지도, URDF, World와 Gazebo 모델 파일을 install 디렉터리에
+복사하고 charging_state와 serving_control을 ros2 run 명령으로 실행할 수
+있도록 콘솔 실행 항목을 등록한다.
+"""
+
 import os
 from glob import glob
 from setuptools import setup
@@ -18,7 +25,7 @@ setup(
         (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*.world')),
 
-        # models 폴더는 아래 방식으로 설치 (가장 안정적)
+        # Gazebo가 model:// 이름으로 찾을 수 있도록 모델별 폴더를 설치한다.
         (os.path.join('share', package_name, 'models/chair'), glob('models/chair/*')),
         (os.path.join('share', package_name, 'models/counter'), glob('models/counter/*')),
         (os.path.join('share', package_name, 'models/table'), glob('models/table/*')),

@@ -1,3 +1,16 @@
+# 식당 시뮬레이션의 Nav2 자율주행 설정 파일.
+#
+# navigation.launch.py가 Nav2 공식 navigation_launch.py를 실행할 때 이 파일을
+# 전달한다. 경로 계획, 주행 제어, 장애물 지도, 복구 행동 플러그인을 선택하고
+# 로봇 크기, 안전거리, 속도, 가속도와 센서 토픽을 설정한다.
+#
+# 주요 동작 흐름:
+# NavigateToPose 목적지 -> Navfn A* 전역 경로 -> Rotation Shim 제자리 회전
+# -> DWB 지역 주행 -> Velocity Smoother 속도 보정 -> /cmd_vel 발행
+#
+# 입력: /map, /scan, /odom, TF
+# 출력: Gazebo Diff Drive 플러그인이 사용하는 /cmd_vel
+
 bt_navigator:
   ros__parameters:
     use_sim_time: true
@@ -33,8 +46,8 @@ controller_server:
       yaw_goal_tolerance: 0.15
 
     FollowPath:
-      # Rotate in place before following a new path to avoid sweeping into
-      # nearby tables while combining forward and angular motion.
+      # 새 경로를 따라가기 전에 제자리 회전하여 전진하면서 회전할 때 주변
+      # 테이블을 스칠 위험을 줄인다.
       plugin: nav2_rotation_shim_controller::RotationShimController
       primary_controller: dwb_core::DWBLocalPlanner
       angular_dist_threshold: 0.26
@@ -46,7 +59,7 @@ controller_server:
       rotate_to_goal_heading: false
       closed_loop: true
 
-      # DWB primary controller
+      # 제자리 회전이 끝난 뒤 실제 경로를 추종하는 DWB 주행 제어기 설정.
       debug_trajectory_details: false
       min_vel_x: 0.0
       min_vel_y: 0.0

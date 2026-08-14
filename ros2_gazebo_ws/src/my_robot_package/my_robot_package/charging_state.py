@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
 
+"""Servi의 배터리 감소, 충전, 잔량 경고와 방전을 모의하는 노드.
+
+serving_control.py가 /servi_1/operation_state에 보내는 working 또는 charging을
+구독한다. working 상태에서는 10초마다 1% 감소하고, 로봇이 충전소에 도착해
+charging 상태가 되면 5초마다 1% 증가한다. 100%가 되면 충전을 멈추며
+50·40·30·20·10%에서 경고를 한 번씩 발행한다.
+
+연동 인터페이스:
+* 구독: /servi_1/operation_state (working 또는 charging)
+* 발행: /servi_1/battery_percentage, /servi_1/is_charging
+* 발행: /servi_1/battery_alert (경고 및 충전 완료 메시지)
+* 발행: /servi_1/emergency_shutdown (0%일 때 True)
+
+serving_control.py는 경고와 긴급 종료 토픽을 구독해 같은 명령 터미널에
+메시지를 출력하고 진행 중인 Nav2 목표를 취소한다.
+"""
+
 import rclpy
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
@@ -8,6 +25,8 @@ from std_msgs.msg import Bool, Float32, String
 
 
 class ChargingState(Node):
+    """servi_1의 작업·충전 이벤트에 따라 가상 배터리 상태를 관리한다."""
+
     def __init__(self):
         super().__init__('charging_state_servi_1')
 
@@ -47,6 +66,7 @@ class ChargingState(Node):
         self._alert('100%: Battery is full. Charging stopped.')
 
     def _operation_callback(self, message):
+        """serving_control이 보낸 이벤트에 따라 작업과 충전 상태를 전환한다."""
         state = message.data.strip().lower()
         if state not in ('working', 'charging'):
             self.get_logger().warning(f'Unknown operation state: {state}')
@@ -72,6 +92,7 @@ class ChargingState(Node):
         self._publish_state()
 
     def _update(self):
+        """현재 동작 상태와 경과 시간에 따라 배터리 잔량을 증감한다."""
         now = self.get_clock().now()
         elapsed = (now - self.last_update).nanoseconds / 1e9
         self.last_update = now
@@ -107,6 +128,7 @@ class ChargingState(Node):
                 return
 
     def _check_low_battery(self, previous):
+        """한 번의 방전 주기에서 잔량 단계별 경고를 각각 한 번만 발행한다."""
         for threshold in (50, 40, 30, 20, 10):
             if (
                 threshold not in self.triggered_thresholds

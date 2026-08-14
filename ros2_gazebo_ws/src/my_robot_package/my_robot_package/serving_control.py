@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
 
+"""터미널 명령을 저장된 목적지로 변환해 Nav2에 전달하는 서빙 제어 노드.
+
+config/locations.yaml에서 주방, 1~7번 테이블, 충전소의 x·y·yaw를 읽는다.
+사용자가 b, 1~7, bb를 입력하면 해당 좌표를 NavigateToPose 액션 서버로
+전송하며 실제 경로 계획과 장애물 회피는 navigation.launch.py로 실행한
+Nav2가 수행한다.
+
+연동 인터페이스:
+* 액션 전송: navigate_to_pose (nav2_msgs/action/NavigateToPose)
+* 상태 발행: /servi_1/operation_state에 working 또는 charging 전송
+* 경고 구독: /servi_1/battery_alert를 받아 현재 터미널에 배터리 경고 출력
+* 종료 구독: /servi_1/emergency_shutdown을 받아 진행 중인 목표 취소
+
+operation_state는 charging_state.py가 구독하며, 배터리 감소·충전 시작 시점을
+결정하는 데 사용한다.
+"""
+
 import math
 import queue
 import threading
@@ -28,6 +45,8 @@ Serving commands (press Enter after each command)
 
 
 class ServingControl(Node):
+    """저장된 식당 목적지를 Nav2 NavigateToPose 액션 서버로 전송한다."""
+
     def __init__(self):
         super().__init__('serving_control')
 
@@ -104,6 +123,7 @@ class ServingControl(Node):
             self.active_goal_handle.cancel_goal_async()
 
     def _load_locations(self, locations_file):
+        """map 기준 목적지 좌표를 불러오고 필수 위치와 값이 있는지 검사한다."""
         if not locations_file.is_file():
             raise FileNotFoundError(
                 f'Locations file does not exist: {locations_file}'
@@ -139,6 +159,7 @@ class ServingControl(Node):
         return frame_id, locations
 
     def navigate_to(self, location_name):
+        """선택한 좌표를 Nav2로 보내고 성공·실패 결과가 올 때까지 기다린다."""
         if self.emergency_shutdown:
             self.get_logger().error('Navigation is disabled: battery is empty.')
             return False
@@ -207,6 +228,7 @@ class ServingControl(Node):
 
 
 def command_to_location(command):
+    """짧은 터미널 명령을 locations.yaml의 목적지 이름으로 변환한다."""
     if command == 'b':
         return 'kitchen_pickup'
     if command == 'bb':
