@@ -27,7 +27,8 @@ provides a consistent environment without requiring a native ROS 2 installation.
 - [x] Waypoint navigation
 - [x] Autonomous serving scenario
 - [x] RViz visualization
-- [ ] Fleet management for multiple robots
+- [x] YAML-based basic dispatch for two robots
+- [ ] Concurrent jobs and traffic/deadlock management
 
 ## Preview
 
@@ -299,6 +300,41 @@ Use this topic for an optional battery check:
 ```bash
 ros2 topic echo /servi_1/battery_percentage
 ```
+
+## 5. Run a Two-Robot Fleet
+
+`config/robots.yaml` stores each robot name, Gazebo spawn pose, and dedicated
+charging pose. The `spawn` pose is also used as the AMCL initial pose.
+
+### Terminal 1: Shared Environment and Two Robots
+
+```bash
+ros2 launch my_robot_package fleet_bringup.launch.py
+```
+
+Gazebo and Map Server start once. URDF, AMCL, Nav2, and battery nodes start in a
+separate namespace for every robot registered in `robots.yaml`.
+
+### Terminal 2: Fleet Commands
+
+```bash
+ros2 run my_robot_package fleet_manager
+```
+
+| Command | Action |
+| :--- | :--- |
+| `b` | Select one robot using distance, battery, and completed-job count |
+| `1` - `7` | Send the assigned robot to the selected table |
+| `bb` | Return the assigned robot to its dedicated charger |
+| `status` | Show every robot state, battery level, and completed-job count |
+| `q` | Stop Fleet Manager |
+
+This stage dispatches one serving job at a time. Robot topics and Nav2 stacks
+are fully separated, so concurrent order assignment and traffic coordination
+can be added next.
+
+To add a robot, append one entry to `robots.yaml` and rebuild; no Python or
+Launch file needs to be copied.
 
 ---
 

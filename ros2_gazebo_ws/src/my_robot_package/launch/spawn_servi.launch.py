@@ -101,6 +101,7 @@ def generate_launch_description():
     charging_state = Node(
         package=package_name,
         executable='charging_state',
+        namespace='servi_1',
         name='charging_state_servi_1',
         output='screen',
         parameters=[{'use_sim_time': True}],

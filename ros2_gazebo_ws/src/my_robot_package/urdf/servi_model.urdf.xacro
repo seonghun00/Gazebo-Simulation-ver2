@@ -1,0 +1,311 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="$(arg robot_name)">
+  <xacro:arg name="robot_name" default="servi_1"/>
+  <xacro:property name="robot_name" value="$(arg robot_name)"/>
+  <!--
+    Servi 로봇의 링크, 관절, 충돌 형상, 센서와 Gazebo 플러그인을 정의한다.
+    spawn_servi.launch.py가 이 파일을 robot_description으로 전달하며,
+    robot_state_publisher는 링크 관계를 /tf와 /tf_static으로 발행한다.
+    Diff Drive 플러그인은 /cmd_vel을 받아 바퀴를 움직이고 /odom을 발행하며,
+    LiDAR 플러그인은 sensor_msgs/msg/LaserScan 형식의 /scan을 발행한다.
+  -->
+
+  <!-- ====================== RViz 표시용 재질 ====================== -->
+  <material name="black">
+    <color rgba="0.02 0.02 0.02 1.0"/>
+  </material>
+  
+  <material name="white">
+    <color rgba="0.9 0.9 0.9 1.0"/>
+  </material>
+  
+  <material name="gray">
+    <color rgba="0.45 0.45 0.45 1.0"/>
+  </material>
+  
+  <material name="orange">
+    <color rgba="1.0 0.45 0.0 1.0"/>
+  </material>
+
+  <!-- ====================== Gazebo 표시용 재질 ====================== -->
+  <gazebo reference="base_link"><material>Gazebo/Black</material></gazebo>
+  <gazebo reference="main_spine_link"><material>Gazebo/White</material></gazebo>
+  <gazebo reference="tray_top_link"><material>Gazebo/Grey</material></gazebo>
+  <gazebo reference="tray_bottom_link"><material>Gazebo/White</material></gazebo>
+  <gazebo reference="tray_middle_link"><material>Gazebo/White</material></gazebo>
+  <gazebo reference="laser_frame"><material>Gazebo/Orange</material></gazebo>
+  <gazebo reference="left_wheel"><material>Gazebo/Black</material></gazebo>
+  <gazebo reference="right_wheel"><material>Gazebo/Black</material></gazebo>
+  <gazebo reference="front_caster"><material>Gazebo/Grey</material></gazebo>
+  <gazebo reference="back_caster"><material>Gazebo/Grey</material></gazebo>
+  <gazebo reference="lidar_bracket_link"><material>Gazebo/Black</material></gazebo>
+  <gazebo reference="lidar_room_wall_link"><material>Gazebo/Black</material></gazebo>
+  <gazebo reference="spine_top_curve_link"><material>Gazebo/White</material></gazebo>
+
+  <link name="base_footprint"/>
+  <joint name="base_footprint_joint" type="fixed">
+      <parent link="base_footprint"/>
+      <child link="base_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+      <inertial>
+          <origin xyz="0 0 0.1" rpy="0 0 0"/>
+          <mass value="50.0"/>
+          <inertia ixx="0.5" ixy="0.0" ixz="0.0" iyy="0.5" iyz="0.0" izz="0.5"/>
+      </inertial>
+      <visual>
+          <origin xyz="0 0 0.1" rpy="0 0 0"/>
+          <geometry><cylinder radius="0.2" length="0.2"/></geometry>
+		  <material name="black"/>
+      </visual>
+      <collision>
+          <origin xyz="0 0 0.1" rpy="0 0 0"/>
+          <geometry><cylinder radius="0.2" length="0.2"/></geometry>
+      </collision>
+  </link>
+
+  <link name="lidar_room_wall_link">
+      <visual>
+          <geometry><cylinder radius="0.16" length="0.03"/></geometry>
+		  <material name="black"/>
+      </visual>
+  </link>
+  <joint name="lidar_room_wall_joint" type="fixed">
+      <parent link="base_link"/><child link="lidar_room_wall_link"/>
+      <origin xyz="0 0 0.23" rpy="0 0 0"/>
+  </joint>
+
+  <link name="main_spine_link">
+      <visual>
+          <geometry><cylinder radius="0.04" length="0.83"/></geometry>
+		  <material name="white"/>
+      </visual>
+  </link>
+  <joint name="main_spine_joint" type="fixed">
+      <parent link="base_link"/><child link="main_spine_link"/>
+      <origin xyz="-0.12 0 0.425" rpy="0 0 0"/>
+  </joint>
+
+  <link name="spine_top_curve_link">
+      <visual>
+          <geometry><box size="0.05 0.07 0.05"/></geometry>
+		  <material name="black"/>
+      </visual>
+  </link>
+  <joint name="spine_top_curve_joint" type="fixed">
+      <parent link="base_link"/><child link="spine_top_curve_link"/>
+      <origin xyz="-0.1 0 0.8" rpy="0 0 0"/>
+  </joint>
+
+  <link name="tray_bottom_link">
+      <visual>
+          <geometry><cylinder radius="0.19" length="0.01"/></geometry>
+		  <material name="white"/>
+      </visual>
+  </link>
+  <joint name="tray_bottom_joint" type="fixed">
+      <parent link="base_link"/><child link="tray_bottom_link"/>
+      <origin xyz="0 0 0.27" rpy="0 0 0"/>
+  </joint>
+
+  <link name="tray_middle_link">
+      <visual>
+          <geometry><cylinder radius="0.19" length="0.01"/></geometry>
+		  <material name="white"/>
+      </visual>
+  </link>
+  <joint name="tray_middle_joint" type="fixed">
+      <parent link="base_link"/><child link="tray_middle_link"/>
+      <origin xyz="0 0 0.55" rpy="0 0 0"/>
+  </joint>
+
+  <link name="tray_top_link">
+      <visual>
+          <geometry><cylinder radius="0.21" length="0.015"/></geometry>
+		  <material name="gray"/>
+      </visual>
+  </link>
+  <joint name="tray_top_joint" type="fixed">
+      <parent link="main_spine_link"/>
+      <child link="tray_top_link"/>
+      <origin xyz="0.12 0 0.415" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 구동 바퀴와 보조 캐스터 -->
+  <link name="left_wheel">
+      <inertial>
+          <mass value="2.0"/>
+          <geometry><cylinder radius="0.08" length="0.015"/></geometry>
+          <inertia ixx="0.003" ixy="0" ixz="0" iyy="0.003" iyz="0" izz="0.006"/>
+      </inertial>
+      <visual>
+          <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+          <geometry><cylinder radius="0.08" length="0.015"/></geometry>
+		  <material name="black"/>
+      </visual>
+      <collision>
+          <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+          <geometry><cylinder radius="0.08" length="0.015"/></geometry>
+      </collision>
+  </link>
+  <joint name="left_wheel_joint" type="continuous">
+      <parent link="base_link"/><child link="left_wheel"/>
+      <origin xyz="0 0.17 0.0" rpy="0 0 0"/> 
+      <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="right_wheel">
+      <inertial>
+          <mass value="2.0"/>
+          <geometry><cylinder radius="0.08" length="0.015"/></geometry>
+          <inertia ixx="0.003" ixy="0" ixz="0" iyy="0.003" iyz="0" izz="0.006"/>
+      </inertial>
+      <visual>
+          <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+          <geometry><cylinder radius="0.08" length="0.015"/></geometry>
+		  <material name="black"/>
+      </visual>
+      <collision>
+          <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+          <geometry><cylinder radius="0.08" length="0.015"/></geometry>
+      </collision>
+  </link>
+  <joint name="right_wheel_joint" type="continuous">
+      <parent link="base_link"/><child link="right_wheel"/>
+      <origin xyz="0 -0.17 0.0" rpy="0 0 0"/> 
+      <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="front_caster">
+      <inertial>
+          <mass value="0.5"/>
+          <geometry><sphere radius="0.04"/></geometry>
+          <inertia ixx="0.0003" ixy="0" ixz="0" iyy="0.0003" iyz="0" izz="0.0003"/>
+      </inertial>
+      <visual>
+          <geometry><sphere radius="0.04"/></geometry>
+		  <material name="gray"/>
+      </visual>
+      <collision>
+          <geometry><sphere radius="0.04"/></geometry>
+      </collision>
+  </link>
+  <joint name="front_caster_joint" type="fixed">
+      <parent link="base_link"/><child link="front_caster"/>
+      <origin xyz="0.14 0 -0.04" rpy="0 0 0"/>
+  </joint>
+
+  <link name="back_caster">
+      <inertial>
+          <mass value="0.5"/>
+          <geometry><sphere radius="0.04"/></geometry>
+          <inertia ixx="0.0003" ixy="0" ixz="0" iyy="0.0003" iyz="0" izz="0.0003"/>
+      </inertial>
+      <visual>
+          <geometry><sphere radius="0.04"/></geometry>
+		  <material name="gray"/>
+      </visual>
+      <collision>
+          <geometry><sphere radius="0.04"/></geometry>
+      </collision>
+  </link>
+  <joint name="back_caster_joint" type="fixed">
+      <parent link="base_link"/><child link="back_caster"/>
+      <origin xyz="-0.14 0 -0.04" rpy="0 0 0"/>
+  </joint>
+
+  <link name="lidar_bracket_link">
+      <visual>
+          <geometry><box size="0.06 0.05 0.05"/></geometry>
+		  <material name="black"/>
+      </visual>
+  </link>
+  <joint name="lidar_bracket_joint" type="fixed">
+      <parent link="base_link"/><child link="lidar_bracket_link"/>
+      <origin xyz="0.19 0 0.22" rpy="0 0 0"/>
+  </joint>
+
+  <link name="laser_frame">
+      <visual>
+          <geometry><cylinder radius="0.025" length="0.02"/></geometry>
+		  <material name="orange"/>
+      </visual>
+  </link>
+  <joint name="laser_joint" type="fixed">
+      <parent link="base_link"/><child link="laser_frame"/>
+      <origin xyz="0.2 0 0.25" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ====================== Gazebo와 ROS 2 연동 플러그인 ====================== -->
+  <gazebo>
+      <plugin name="${robot_name}_diff_drive" filename="libgazebo_ros_diff_drive.so">
+          <ros>
+              <namespace>/${robot_name}</namespace>
+              <remapping>cmd_vel:=cmd_vel</remapping>
+              <remapping>odom:=odom</remapping>
+              <remapping>/tf:=tf</remapping>
+              <remapping>/tf_static:=tf_static</remapping>
+          </ros>
+          <update_rate>50</update_rate>
+          <left_joint>left_wheel_joint</left_joint>
+          <right_joint>right_wheel_joint</right_joint>
+          <wheel_separation>0.34</wheel_separation>
+          <wheel_diameter>0.16</wheel_diameter>
+          <max_wheel_torque>200</max_wheel_torque>
+          <max_wheel_acceleration>1.0</max_wheel_acceleration>
+          <odometry_frame>${robot_name}/odom</odometry_frame>
+          <robot_base_frame>${robot_name}/base_footprint</robot_base_frame>
+          <publish_odom>true</publish_odom>
+          <publish_odom_tf>true</publish_odom_tf>
+          <publish_wheel_tf>true</publish_wheel_tf>
+      </plugin>
+
+      <plugin name="${robot_name}_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
+          <ros>
+              <namespace>/${robot_name}</namespace>
+              <remapping>~/out:=joint_states</remapping>
+          </ros>
+          <update_rate>30</update_rate>
+          <joint_name>left_wheel_joint</joint_name>
+          <joint_name>right_wheel_joint</joint_name>
+      </plugin>
+  </gazebo>
+
+  <gazebo reference="laser_frame">
+      <sensor name="${robot_name}_lidar" type="ray">
+          <pose>0 0 0 0 0 0</pose>
+          <visualize>true</visualize>
+          <update_rate>10</update_rate>
+          <ray>
+              <scan>
+                  <horizontal>
+                      <samples>400</samples>
+                      <resolution>1</resolution>
+                      <min_angle>-1.7453</min_angle>
+                      <max_angle>1.7453</max_angle>
+                  </horizontal>
+              </scan>
+              <range>
+                  <min>0.12</min>
+                  <max>12.0</max>
+                  <resolution>0.01</resolution>
+              </range>
+          </ray>
+          <plugin name="${robot_name}_laser_controller" filename="libgazebo_ros_ray_sensor.so">
+              <ros>
+                  <namespace>/${robot_name}</namespace>
+                  <argument>~/out:=scan</argument>
+                  <remapping>/tf:=tf</remapping>
+                  <remapping>/tf_static:=tf_static</remapping>
+              </ros>
+              <output_type>sensor_msgs/LaserScan</output_type>
+              <frame_name>${robot_name}/laser_frame</frame_name>
+          </plugin>
+      </sensor>
+  </gazebo>
+
+  <gazebo reference="front_caster"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
+  <gazebo reference="back_caster"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
+
+</robot>

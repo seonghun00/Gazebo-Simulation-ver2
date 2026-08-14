@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
-"""Servi의 배터리 감소, 충전, 잔량 경고와 방전을 모의하는 노드.
+"""각 Servi의 배터리 감소, 충전, 잔량 경고와 방전을 모의하는 공용 노드.
 
-serving_control.py가 /servi_1/operation_state에 보내는 working 또는 charging을
+같은 로봇 네임스페이스의 operation_state에 들어오는 working 또는 charging을
 구독한다. working 상태에서는 10초마다 1% 감소하고, 로봇이 충전소에 도착해
 charging 상태가 되면 5초마다 1% 증가한다. 100%가 되면 충전을 멈추며
 50·40·30·20·10%에서 경고를 한 번씩 발행한다.
 
 연동 인터페이스:
-* 구독: /servi_1/operation_state (working 또는 charging)
-* 발행: /servi_1/battery_percentage, /servi_1/is_charging
-* 발행: /servi_1/battery_alert (경고 및 충전 완료 메시지)
-* 발행: /servi_1/emergency_shutdown (0%일 때 True)
+* 구독: operation_state (working 또는 charging)
+* 발행: battery_percentage, is_charging
+* 발행: battery_alert (경고 및 충전 완료 메시지)
+* 발행: emergency_shutdown (0%일 때 True)
 
 serving_control.py는 경고와 긴급 종료 토픽을 구독해 같은 명령 터미널에
 메시지를 출력하고 진행 중인 Nav2 목표를 취소한다.
@@ -25,30 +25,34 @@ from std_msgs.msg import Bool, Float32, String
 
 
 class ChargingState(Node):
-    """servi_1의 작업·충전 이벤트에 따라 가상 배터리 상태를 관리한다."""
+    """현재 네임스페이스 로봇의 작업·충전 이벤트로 배터리를 관리한다."""
 
     def __init__(self):
-        super().__init__('charging_state_servi_1')
+        super().__init__('charging_state')
+
+        self.declare_parameter('charger_x', 0.0)
+        self.declare_parameter('charger_y', 0.0)
+        self.declare_parameter('charger_yaw', 0.0)
 
         state_qos = QoSProfile(depth=1)
         state_qos.reliability = ReliabilityPolicy.RELIABLE
         state_qos.durability = DurabilityPolicy.TRANSIENT_LOCAL
 
         self.battery_publisher = self.create_publisher(
-            Float32, '/servi_1/battery_percentage', state_qos
+            Float32, 'battery_percentage', state_qos
         )
         self.charging_publisher = self.create_publisher(
-            Bool, '/servi_1/is_charging', state_qos
+            Bool, 'is_charging', state_qos
         )
         self.alert_publisher = self.create_publisher(
-            String, '/servi_1/battery_alert', 10
+            String, 'battery_alert', 10
         )
         self.shutdown_publisher = self.create_publisher(
-            Bool, '/servi_1/emergency_shutdown', state_qos
+            Bool, 'emergency_shutdown', state_qos
         )
         self.create_subscription(
             String,
-            '/servi_1/operation_state',
+            'operation_state',
             self._operation_callback,
             state_qos,
         )

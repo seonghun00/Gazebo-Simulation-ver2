@@ -256,11 +256,34 @@
       </link>
     </model>
 
-    <!-- 충전 스테이션: 주방 음식 수령대 오른쪽 -->
-    <model name="charging_station">
+    <!--
+      충전 스테이션 2개: 주방 수령대 끝과 오른쪽 벽 사이를 3등분한 뒤,
+      두 로봇의 간격을 확보하도록 각각 바깥쪽으로 0.10m 이동해 배치한다.
+    -->
+    <model name="charging_station_1">
       <static>true</static>
-      <pose>-7.12 -4.988542 0 0 0 0</pose>
-      <link name="charging_station_link">
+      <pose>-7.32 -4.458333 0 0 0 0</pose>
+      <link name="charging_station_1_link">
+        <visual name="visual">
+          <pose>0 0 0.0025 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>0.005</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.53 0.81 0.98 1</ambient>
+            <diffuse>0.53 0.81 0.98 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="charging_station_2">
+      <static>true</static>
+      <pose>-7.32 -5.329167 0 0 0 0</pose>
+      <link name="charging_station_2_link">
         <visual name="visual">
           <pose>0 0 0.0025 0 0 0</pose>
           <geometry>

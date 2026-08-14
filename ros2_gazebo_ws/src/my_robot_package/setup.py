@@ -22,7 +22,7 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
         (os.path.join('share', package_name, 'maps'), glob('maps/*')),
-        (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf')),
+        (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf*')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*.world')),
 
         # Gazebo가 model:// 이름으로 찾을 수 있도록 모델별 폴더를 설치한다.
@@ -37,10 +37,10 @@ setup(
     maintainer_email='your_email@email.com',
     description='Servi robot simulation and control',
     license='Apache-2.0',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'charging_state = my_robot_package.charging_state:main',
+            'fleet_manager = my_robot_package.fleet_manager:main',
             'serving_control = my_robot_package.serving_control:main',
         ],
     },

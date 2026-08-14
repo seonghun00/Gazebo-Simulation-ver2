@@ -27,7 +27,8 @@
 - [x] 경유지 주행
 - [x] 자율 서빙 시나리오
 - [x] RViz 시각화
-- [ ] 다중 로봇 Fleet 관리
+- [x] YAML 기반 2대 로봇 Fleet 기본 배정
+- [ ] 동시 작업과 교통·교착 관리
 
 ## 미리보기
 
@@ -297,6 +298,41 @@ bb → charging_station
 ```bash
 ros2 topic echo /servi_1/battery_percentage
 ```
+
+## 5. 로봇 2대 Fleet 실행
+
+`config/robots.yaml`에는 로봇 이름, Gazebo 시작 위치와 전용 충전소 좌표가
+저장됩니다. `spawn` 좌표는 Gazebo 생성 위치와 AMCL 초기 위치에 함께 사용됩니다.
+
+### 터미널 1: 공용 환경과 로봇 2대
+
+```bash
+ros2 launch my_robot_package fleet_bringup.launch.py
+```
+
+Gazebo와 Map Server는 각각 한 번만 실행하고, `robots.yaml`에 등록된 로봇마다
+URDF, AMCL, Nav2와 배터리 노드를 별도 네임스페이스로 실행합니다.
+
+### 터미널 2: Fleet 명령
+
+```bash
+ros2 run my_robot_package fleet_manager
+```
+
+| 명령 | 동작 |
+| :--- | :--- |
+| `b` | 거리·배터리·완료 작업 수를 비교해 로봇 한 대를 주방으로 배정 |
+| `1` - `7` | 배정된 로봇을 선택한 테이블로 이동 |
+| `bb` | 배정된 로봇을 자신의 충전소로 복귀 |
+| `status` | 모든 로봇의 상태, 배터리와 완료 작업 수 확인 |
+| `q` | Fleet Manager 종료 |
+
+현재 단계는 한 번에 한 건을 배정하는 기본 Fleet입니다. 로봇별 토픽과 Nav2는
+완전히 분리되어 있으며, 다음 단계에서 여러 주문의 동시 배정과 교통 관리를
+추가할 수 있습니다.
+
+로봇을 추가할 때는 Python이나 Launch 코드를 복사하지 않고 `robots.yaml`에
+새 항목만 추가한 뒤 다시 빌드합니다.
 
 ---
 

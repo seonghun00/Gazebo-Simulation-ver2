@@ -1,0 +1,26 @@
+# Fleet에서 실행할 로봇 목록과 각 로봇의 시작·충전 위치.
+# spawn은 Gazebo와 AMCL 초기 위치에 함께 사용되고 charging_station은
+# 임무가 끝난 로봇이 복귀할 map 프레임 기준 목적지로 사용된다.
+
+robots:
+  - name: servi_1
+    spawn:
+      x: -7.32
+      y: -4.458333
+      z: 0.25
+      yaw: 0.0
+    charging_station:
+      x: -7.32
+      y: -4.458333
+      yaw: 0.0
+
+  - name: servi_2
+    spawn:
+      x: -7.32
+      y: -5.329167
+      z: 0.25
+      yaw: 0.0
+    charging_station:
+      x: -7.32
+      y: -5.329167
+      yaw: 0.0

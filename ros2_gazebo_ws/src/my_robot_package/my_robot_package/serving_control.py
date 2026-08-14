@@ -9,9 +9,9 @@ Nav2가 수행한다.
 
 연동 인터페이스:
 * 액션 전송: navigate_to_pose (nav2_msgs/action/NavigateToPose)
-* 상태 발행: /servi_1/operation_state에 working 또는 charging 전송
-* 경고 구독: /servi_1/battery_alert를 받아 현재 터미널에 배터리 경고 출력
-* 종료 구독: /servi_1/emergency_shutdown을 받아 진행 중인 목표 취소
+* 상태 발행: operation_state에 working 또는 charging 전송
+* 경고 구독: battery_alert를 받아 현재 터미널에 배터리 경고 출력
+* 종료 구독: emergency_shutdown을 받아 진행 중인 목표 취소
 
 operation_state는 charging_state.py가 구독하며, 배터리 감소·충전 시작 시점을
 결정하는 데 사용한다.
@@ -50,6 +50,18 @@ class ServingControl(Node):
     def __init__(self):
         super().__init__('serving_control')
 
+        self.declare_parameter('robot_name', 'servi_1')
+        self.declare_parameter('use_robot_namespace', False)
+        robot_name = self.get_parameter('robot_name').value
+        use_robot_namespace = self.get_parameter(
+            'use_robot_namespace'
+        ).value
+        node_namespace = self.get_namespace().strip('/')
+        state_prefix = '' if node_namespace else f'/{robot_name}/'
+        navigation_prefix = (
+            state_prefix if node_namespace or use_robot_namespace else ''
+        )
+
         package_share = Path(get_package_share_directory('my_robot_package'))
         default_locations_file = package_share / 'config' / 'locations.yaml'
 
@@ -65,26 +77,26 @@ class ServingControl(Node):
         self.navigate_client = ActionClient(
             self,
             NavigateToPose,
-            'navigate_to_pose',
+            f'{navigation_prefix}navigate_to_pose',
         )
         shutdown_qos = QoSProfile(depth=1)
         shutdown_qos.reliability = ReliabilityPolicy.RELIABLE
         shutdown_qos.durability = DurabilityPolicy.TRANSIENT_LOCAL
         self.create_subscription(
             Bool,
-            '/servi_1/emergency_shutdown',
+            f'{state_prefix}emergency_shutdown',
             self._emergency_shutdown_callback,
             shutdown_qos,
         )
         self.create_subscription(
             String,
-            '/servi_1/battery_alert',
+            f'{state_prefix}battery_alert',
             self._battery_alert_callback,
             10,
         )
         self.operation_state_publisher = self.create_publisher(
             String,
-            '/servi_1/operation_state',
+            f'{state_prefix}operation_state',
             shutdown_qos,
         )
         self.emergency_shutdown = False
