@@ -45,11 +45,11 @@ provides a consistent environment without requiring a native ROS 2 installation.
 
 ### SLAM Mapping
 
-<img width="1912" height="767" alt="Intermediate SLAM mapping result" src="https://github.com/user-attachments/assets/4cb9bc90-7143-4ca4-ac37-d214f4e5926b" />
+<img width="1913" height="904" alt="SLAM 중간과정" src="https://github.com/user-attachments/assets/179b8cac-9fdb-4973-9ae7-2892c2a0cfcd" />
 
 <p align="center"><i>Fig3. Mobile robot creating a SLAM map of the restaurant</i></p>
 
-### Single-Robot Autonomous Navigation
+### Single-Robot Autonomous Navigation (.mp4)
 
 https://github.com/user-attachments/assets/b09d8b21-9ca7-4926-a3cb-e7b876ed6227
 
