@@ -27,7 +27,7 @@
 - [x] 경유지 주행
 - [x] 자율 서빙 시나리오
 - [x] RViz 시각화
-- [ ] 2대 이상 Fleet 관리
+- [ ] 다중 로봇 Fleet 관리
 
 ## 미리보기
 
@@ -43,13 +43,13 @@
 
 <p align="center"><i>Fig2. Gazebo 간이 레스토랑 환경에서 동작하는 모바일 로봇</i></p>
 
-### SLAM 매핑
+### SLAM 맵핑
 
-<img width="1912" height="767" alt="SLAM 지도 생성 중간 결과" src="https://github.com/user-attachments/assets/4cb9bc90-7143-4ca4-ac37-d214f4e5926b" />
+<img width="1913" height="904" alt="SLAM 중간과정" src="https://github.com/user-attachments/assets/ebdab7c6-e6c5-495f-ac02-fdf668800c6e" />
 
 <p align="center"><i>Fig3. 간이 레스토랑 환경에서 SLAM 지도를 생성하는 모습</i></p>
 
-### 단일 로봇 자율주행 결과
+### 단일 로봇 자율주행 결과 (.mp4)
 
 https://github.com/user-attachments/assets/ae2cbac7-f8ef-4683-aa78-82b2f2b886a5
 
