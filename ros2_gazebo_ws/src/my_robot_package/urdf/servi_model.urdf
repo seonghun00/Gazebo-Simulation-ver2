@@ -1,5 +1,13 @@
 <robot name="servi_robot">
-  <!-- ====================== Material 정의 (RViz용) ====================== -->
+  <!--
+    Servi 로봇의 링크, 관절, 충돌 형상, 센서와 Gazebo 플러그인을 정의한다.
+    spawn_servi.launch.py가 이 파일을 robot_description으로 전달하며,
+    robot_state_publisher는 링크 관계를 /tf와 /tf_static으로 발행한다.
+    Diff Drive 플러그인은 /cmd_vel을 받아 바퀴를 움직이고 /odom을 발행하며,
+    LiDAR 플러그인은 sensor_msgs/msg/LaserScan 형식의 /scan을 발행한다.
+  -->
+
+  <!-- ====================== RViz 표시용 재질 ====================== -->
   <material name="black">
     <color rgba="0.02 0.02 0.02 1.0"/>
   </material>
@@ -16,7 +24,7 @@
     <color rgba="1.0 0.45 0.0 1.0"/>
   </material>
 
-  <!-- ====================== Material 정의 (Gazebo용) ====================== -->
+  <!-- ====================== Gazebo 표시용 재질 ====================== -->
   <gazebo reference="base_link"><material>Gazebo/Black</material></gazebo>
   <gazebo reference="main_spine_link"><material>Gazebo/White</material></gazebo>
   <gazebo reference="tray_top_link"><material>Gazebo/Grey</material></gazebo>
@@ -122,7 +130,7 @@
       <origin xyz="0.12 0 0.415" rpy="0 0 0"/>
   </joint>
 
-  <!-- Wheels & Casters -->
+  <!-- 구동 바퀴와 보조 캐스터 -->
   <link name="left_wheel">
       <inertial>
           <mass value="2.0"/>
@@ -227,7 +235,7 @@
       <origin xyz="0.2 0 0.25" rpy="0 0 0"/>
   </joint>
 
-  <!-- ====================== Gazebo Plugins ====================== -->
+  <!-- ====================== Gazebo와 ROS 2 연동 플러그인 ====================== -->
   <gazebo>
       <plugin name="servi_diff_drive" filename="libgazebo_ros_diff_drive.so">
           <ros>

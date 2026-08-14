@@ -7,8 +7,10 @@
 
   <link name="table_set_link">
 
+    <!-- simple_restaurant.world에서 model://table_set으로 불러오는 테이블 세트. -->
+    <!-- 테이블 1개와 의자 4개의 시각·충돌 형상을 하나의 고정 모델로 묶는다. -->
     <!-- ========================= -->
-    <!-- Table -->
+    <!-- 테이블 -->
     <!-- ========================= -->
 
     <collision name="table_collision">
@@ -32,7 +34,7 @@
     </visual>
 
     <!-- ========================= -->
-    <!-- Chair 1 -->
+    <!-- 의자 1 -->
     <!-- ========================= -->
 
     <collision name="chair1_collision">
@@ -57,7 +59,7 @@
       </geometry>
     </visual>
 
-    <!-- Chair 2 -->
+    <!-- 의자 2 -->
 
     <collision name="chair2_collision">
       <pose>0.30 0.90 0.2 0 0 0</pose>
@@ -81,7 +83,7 @@
       </geometry>
     </visual>
 
-    <!-- Chair 3 -->
+    <!-- 의자 3 -->
 
     <collision name="chair3_collision">
       <pose>-0.30 -0.90 0.2 0 0 0</pose>
@@ -105,7 +107,7 @@
       </geometry>
     </visual>
 
-    <!-- Chair 4 -->
+    <!-- 의자 4 -->
 
     <collision name="chair4_collision">
       <pose>0.30 -0.90 0.2 0 0 0</pose>
