@@ -56,6 +56,8 @@ https://github.com/user-attachments/assets/b09d8b21-9ca7-4926-a3cb-e7b876ed6227
 
 <p align="center"><i>Fig4. Autonomous navigation from the charging station to the kitchen counter, Table 4, and back</i></p>
 
+
+
 ## Main Components
 
 | Component | Details |
